@@ -11,18 +11,18 @@ const copy = async () => {
     .catch((e) => false);
 
   if (newFolderExists) {
-    throw createfileSystemError();
+    throw createFileSystemError();
   }
 
   try {
     await fs.access(originalFolderPath, fs.constants.R_OK);
     await fs.cp(originalFolderPath, newFolderPath, { recursive: true });
   } catch (e) {
-    throw createfileSystemError();
+    throw createFileSystemError();
   }
 };
 
-function createfileSystemError() {
+function createFileSystemError() {
   return new Error("FS operation failed");
 }
 
