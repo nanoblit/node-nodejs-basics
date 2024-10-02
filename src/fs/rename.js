@@ -13,9 +13,9 @@ const rename = async () => {
   }
 
   try {
-    fs.rename(wrongFilePath, properFilePath);
+    await fs.rename(wrongFilePath, properFilePath);
   } catch (e) {
-    throw createFileSystemError;
+    throw createFileSystemError();
   }
 };
 
