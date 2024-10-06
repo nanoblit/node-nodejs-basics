@@ -8,7 +8,7 @@ const compress = async () => {
   const destinationPath = path.join(import.meta.dirname, "files", "archive.gz");
   const gzip = createGzip();
 
-  pipeline(createReadStream(sourcePath), gzip, createWriteStream(destinationPath));
+  await pipeline(createReadStream(sourcePath), gzip, createWriteStream(destinationPath));
 };
 
 await compress();
