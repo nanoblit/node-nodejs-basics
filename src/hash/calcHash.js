@@ -25,7 +25,7 @@ const calculateHash = async () => {
 
   pipeline(fs.createReadStream(filePath), new HashTransform(), process.stdout, (error) => {
     if (error) {
-      throw new Error(`Stream pipeline has failed.\n${error}`);
+      throw new Error(`Stream pipeline has failed.\n${error.message}`);
     }
   });
 };
