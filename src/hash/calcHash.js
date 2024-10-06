@@ -1,20 +1,33 @@
-import fs from "node:fs/promises";
+import fs from "node:fs";
 import { createHash } from "node:crypto";
+import { Transform, pipeline } from "node:stream";
 import path from "node:path";
+
+class HashTransform extends Transform {
+  constructor(options) {
+    super(options);
+    this.hash = createHash("sha256");
+  }
+
+  _transform(data, encoding, callback) {
+    this.hash.update(data);
+    callback();
+  }
+
+  _flush(callback) {
+    this.push(this.hash.digest("hex"));
+    callback();
+  }
+}
 
 const calculateHash = async () => {
   const filePath = path.join(import.meta.dirname, "files", "fileToCalculateHashFor.txt");
-  let contents;
 
-  try {
-    const file = await fs.open(filePath, "r");
-    contents = await file.readFile({ encoding: "utf-8" });
-  } catch (e) {
-    throw new Error("FS operation failed");
-  }
-
-  const hashedContents = createHash("sha256").update(contents).digest("hex");
-  process.stdout.write(hashedContents);
+  pipeline(fs.createReadStream(filePath), new HashTransform(), process.stdout, (error) => {
+    if (error) {
+      throw new Error("Stream pipeline has failed. ", error);
+    }
+  });
 };
 
 await calculateHash();
